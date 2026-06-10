@@ -152,9 +152,9 @@ Knowledge base를 만들 때는 먼저 **Knowledge source**를 선택합니다. 
 11. Knowledge base 이름을 `.env`의 `FOUNDRY_KNOWLEDGE_BASE_NAME`에 넣습니다.
 12. Knowledge base MCP endpoint를 확인합니다. 형식은 다음과 같습니다.
 
-```text
-https://<search-service>.search.windows.net/knowledgebases/<knowledge-base-name>/mcp?api-version=2025-11-01-preview
-```
+    ```text
+    https://<search-service>.search.windows.net/knowledgebases/<knowledge-base-name>/mcp?api-version=2025-11-01-preview
+    ```
 
 13. connection 이름을 예를 들어 `chapter-8-2-kb-mcp-connection`으로 정하고 `.env`의 `FOUNDRY_KB_MCP_CONNECTION_NAME`에 넣습니다.
 14. 포털에서 RemoteTool/MCP connection 메뉴가 보이지 않아도 괜찮습니다. 8.2 코드가 `FOUNDRY_PROJECT_RESOURCE_ID`를 사용해 ARM REST API로 connection을 생성하거나 업데이트합니다.
@@ -352,38 +352,38 @@ $appInsightsName = "ystest8"
 $workspaceName = "law-ystest8"
 
 az monitor log-analytics workspace create `
-	--resource-group $resourceGroup `
-	--workspace-name $workspaceName `
-	--location $location
+  --resource-group $resourceGroup `
+  --workspace-name $workspaceName `
+  --location $location
 
 $workspaceId = az monitor log-analytics workspace show `
-	--resource-group $resourceGroup `
-	--workspace-name $workspaceName `
-	--query id `
-	--output tsv
+  --resource-group $resourceGroup `
+  --workspace-name $workspaceName `
+  --query id `
+  --output tsv
 
 az resource update `
-	--resource-group $resourceGroup `
-	--name $appInsightsName `
-	--resource-type microsoft.insights/components `
-	--set properties.WorkspaceResourceId=$workspaceId
+  --resource-group $resourceGroup `
+  --name $appInsightsName `
+  --resource-type microsoft.insights/components `
+  --set properties.WorkspaceResourceId=$workspaceId
 ```
 
 재연결 후 8.1 또는 8.2를 다시 실행하고 몇 분 기다립니다. Azure Monitor에서 telemetry 유입을 직접 확인하려면 다음 쿼리를 사용할 수 있습니다.
 
 ```powershell
 $customerId = az monitor log-analytics workspace show `
-	--resource-group $resourceGroup `
-	--workspace-name $workspaceName `
-	--query customerId `
-	--output tsv
+  --resource-group $resourceGroup `
+  --workspace-name $workspaceName `
+  --query customerId `
+  --output tsv
 
 $query = 'union withsource=TableName isfuzzy=true AppTraces, AppRequests, AppDependencies, AppExceptions | where TimeGenerated > ago(30m) | summarize Count=count(), Latest=max(TimeGenerated) by TableName | order by Count desc'
 
 az monitor log-analytics query `
-	-w $customerId `
-	--analytics-query $query `
-	--output table
+  -w $customerId `
+  --analytics-query $query `
+  --output table
 ```
 
 ## 8.7 실행
