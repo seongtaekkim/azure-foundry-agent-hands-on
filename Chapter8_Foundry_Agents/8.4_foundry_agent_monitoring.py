@@ -16,10 +16,12 @@ if __name__ == "__main__":
     print("이 파일은 모델을 새로 호출하지 않고, Foundry 포털의 에이전트 모니터링 화면을 읽는 순서를 안내합니다.\n")
 
     print("1. 먼저 8.1, 8.2 또는 8.3 실습에서 agent version을 남겨 둡니다.")
-    print('   PowerShell: $env:FOUNDRY_KEEP_AGENT="true"')
-    print("   실행 예: python .\\Chapter8_Foundry_Agents\\8.1_create_and_run_foundry_agent.py")
-    print("   실행 예: python .\\Chapter8_Foundry_Agents\\8.2_create_foundry_agent_with_knowledge_base.py")
-    print("   실행 예: python .\\Chapter8_Foundry_Agents\\8.3_create_foundry_agent_with_mcp.py")
+    print('   환경 변수 설정 (Windows PowerShell): $env:FOUNDRY_KEEP_AGENT="true"')
+    print("   환경 변수 설정 (macOS/Linux bash·zsh): export FOUNDRY_KEEP_AGENT=true")
+    print("   실행 예: python ./Chapter8_Foundry_Agents/8.1_create_and_run_foundry_agent.py")
+    print("   실행 예: python ./Chapter8_Foundry_Agents/8.2_create_foundry_agent_with_knowledge_base.py")
+    print("   실행 예: python ./Chapter8_Foundry_Agents/8.3_create_foundry_agent_with_mcp.py")
+    print("   (Windows에서는 경로 구분자로 역슬래시 \\ 를 사용해도 됩니다.)")
     print(f"   포털에서 확인할 agent 이름 후보: {', '.join(AGENT_NAMES)}\n")
 
     print("2. Microsoft Foundry 포털에서 해당 agent를 엽니다.")

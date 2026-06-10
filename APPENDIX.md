@@ -21,7 +21,9 @@ FOUNDRY_EMBEDDING_DEPLOYMENT_NAME=text-embedding-3-small
 
 `.env.example`은 실제 `.env`와 같은 변수 이름만 갖도록 관리합니다. 예시 파일에는 secret 값을 넣지 않고, endpoint나 connection string은 placeholder로 둡니다.
 
-변수 목록을 확인하려면 PowerShell에서 아래처럼 비교합니다.
+변수 목록을 확인하려면 아래처럼 두 파일의 변수 이름을 비교합니다.
+
+Windows (PowerShell):
 
 ```powershell
 $envKeys = Get-Content .env | ForEach-Object { if ($_ -match '^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=') { $matches[1] } }
@@ -29,7 +31,14 @@ $exampleKeys = Get-Content .env.example | ForEach-Object { if ($_ -match '^\s*([
 Compare-Object $envKeys $exampleKeys
 ```
 
-아무 출력이 없으면 두 파일이 같은 변수 집합을 가진 것입니다.
+macOS / Linux (bash·zsh):
+
+```bash
+diff <(grep -oE '^[A-Za-z_][A-Za-z0-9_]*' .env | sort) \
+     <(grep -oE '^[A-Za-z_][A-Za-z0-9_]*' .env.example | sort)
+```
+
+아무 출력이 없으면(차이가 없으면) 두 파일이 같은 변수 집합을 가진 것입니다.
 
 ## 인증
 
