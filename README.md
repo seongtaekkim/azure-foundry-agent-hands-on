@@ -21,80 +21,22 @@
 
 ## 시작하기 전에
 
-이 커리큘럼을 원활하게 진행하려면 다음 환경이 준비되어 있어야 합니다.
+이 커리큘럼을 시작하려면 먼저 아래 **필요한 서비스/구독과 OS별 소프트웨어**를 준비합니다. endpoint·API key·모델 배포·Application Insights 같은 실제 리소스 생성과 `.env` 설정은 준비물이 갖춰진 다음 [실습 환경 처음 잡기](#실습-환경-처음-잡기)에서 진행합니다.
 
 > [!NOTE]
 > 이 문서의 명령 예시는 OS에 따라 문법이 다른 경우 **Windows (PowerShell)** 와 **macOS / Linux (bash·zsh)** 블록으로 나눠 표기합니다. 본인이 사용하는 OS의 블록을 따라 실행하세요. `uv run ...`처럼 양쪽이 동일한 명령은 그대로 사용하면 됩니다.
 
-### 1. Microsoft Azure 계정 및 Microsoft Foundry 프로젝트
+### 1. 필요한 서비스와 구독
 
-실습은 Microsoft Foundry 또는 Azure OpenAI의 OpenAI-compatible endpoint를 기준으로 진행합니다. 모델 배포, tracing, MCP 스타일 도구 서버, Foundry Agent Service를 API key 기반 호출 흐름에서 단계적으로 실습합니다.
+실습은 Microsoft Foundry 또는 Azure OpenAI의 OpenAI-compatible endpoint를 기준으로 진행합니다. 모델 배포, tracing, MCP 스타일 도구 서버, Foundry Agent Service를 API key 기반 호출 흐름에서 단계적으로 실습합니다. 따라서 다음 서비스에 접근할 수 있는 계정이 필요합니다.
 
-준비 항목은 다음과 같습니다.
+- Microsoft Azure 구독(계정)
+- Microsoft Foundry 프로젝트 또는 Azure OpenAI 리소스를 만들 수 있는 권한
+- (선택) 8장 확장 실습을 위한 Azure AI Search, Application Insights 사용 권한
 
-- OpenAI-compatible endpoint 1개
-- API key 1개
-- Endpoint 값: `.env`의 `FOUNDRY_OPENAI_ENDPOINT`에 입력합니다.
-- API key 값: `.env`의 `FOUNDRY_API_KEY`에 입력합니다.
+이 단계에서는 "이런 서비스를 쓸 수 있는 계정과 권한이 있는지"만 확인합니다. 실제 endpoint/API key 확보, 모델 배포, tracing, Application Insights 생성 같은 리소스 준비는 아래 소프트웨어 설치를 마친 뒤 [실습 환경 처음 잡기](#실습-환경-처음-잡기)에서 단계별로 진행합니다.
 
-Azure OpenAI endpoint는 보통 다음 형태입니다.
-
-```bash
-https://<resource>.openai.azure.com/
-```
-
-Foundry inference endpoint를 직접 쓰는 경우에는 `FOUNDRY_OPENAI_ENDPOINT_TYPE=foundry`로 바꾸고, endpoint를 OpenAI-compatible base URL로 입력합니다.
-
-### 2. Foundry 모델 배포
-
-이 실습의 기본 예제는 다음 모델 배포 이름을 사용합니다.
-
-- Chat/Responses 모델 배포: `gpt-5.4`
-- Embeddings 모델 배포: `text-embedding-3-small`
-
-모델 배포 이름은 Azure 모델 이름이 아니라 Foundry 프로젝트 안에서 만든 배포 이름입니다. 다른 이름으로 배포했다면 `.env`에서 아래 값을 실제 배포 이름에 맞게 변경하세요.
-
-```bash
-FOUNDRY_MODEL_DEPLOYMENT_NAME=gpt-5.4
-FOUNDRY_EMBEDDING_DEPLOYMENT_NAME=text-embedding-3-small
-```
-
-모델 배포가 준비되지 않으면 1장의 첫 모델 호출, 2장의 Responses API smoke test, 4장의 RAG 예제가 정상 동작하지 않습니다.
-
-### 3. Foundry Tracing 연결
-
-Tracing 연결은 필수는 아니지만 강력히 권장합니다. 연결되어 있으면 Foundry 포털에서 요청, 응답, latency, error span을 추적할 수 있습니다. 도구 호출이나 실제 Agent Service 실행 trace는 해당 선택 실습을 실행하는 환경에서 확인합니다.
-
-- Tracing 연결이 있는 경우: Foundry/monitoring 화면에서 trace를 확인하며 실습합니다.
-- Tracing 연결이 없는 경우: 코드가 콘솔 trace로 대체 실행되므로 핵심 실습은 계속 진행할 수 있습니다.
-
-Tracing 관련 예제는 다음 파일에서 확인합니다.
-
-```bash
-uv run Chapter2_Foundry_Fundamentals/2.3_foundry_tracing_smoke_test.py
-uv run Chapter8_Foundry_Agents/8.4_foundry_agent_monitoring.py
-```
-
-### 4. Application Insights 생성
-
-Application Insights connection string은 Application Insights 리소스를 먼저 만들어야 확인할 수 있습니다. 8장 monitoring과 Azure Monitor trace를 보려면 강의 전에 Azure Portal에서 다음 순서로 준비합니다.
-
-1. Azure Portal에서 **Application Insights**를 검색해 새 리소스를 만듭니다.
-2. 실습 Foundry resource와 같은 subscription/resource group/region을 선택합니다.
-3. **Workspace-based** Application Insights를 선택하고 Log Analytics workspace를 새로 만들거나 기존 workspace를 연결합니다.
-4. 생성이 끝나면 Application Insights 리소스의 **Overview** 또는 **Properties**에서 **Connection String** 값을 복사합니다.
-5. `.env`에 다음처럼 붙여 넣습니다.
-
-    ```bash
-    FOUNDRY_APPLICATIONINSIGHTS_CONNECTION_STRING=<application-insights-connection-string>
-    FOUNDRY_APPLICATIONINSIGHTS_AUTO_CREATE=false
-    ```
-
-이 값은 로컬 Python 코드의 OpenTelemetry span을 Azure Monitor로 보내는 데 사용합니다. Foundry 포털의 agent 추적/monitoring 화면에서도 같은 telemetry를 보려면, 포털에서 project 또는 agent의 monitoring/trace 화면에 표시되는 Application Insights 연결 배너를 통해 같은 리소스를 연결합니다.
-
-Application Insights를 만들지 않아도 실습 코드는 콘솔 trace로 계속 실행됩니다. 다만 8.4에서 Azure Portal이나 Foundry 포털의 monitoring 데이터를 함께 보려면 connection string과 포털 연결이 필요합니다.
-
-### 5. uv 설치와 Python 3.11.9 (Python은 uv가 자동 관리)
+### 2. uv 설치와 Python 3.11.9 (Python은 uv가 자동 관리)
 
 이 실습은 **[uv](https://docs.astral.sh/uv/) 기반 실행을 기본으로 안내합니다.** uv는 패키지 관리자이자 Python 버전 관리자로, 가상 환경 생성·활성화·패키지 설치를 한 번에 처리하고 실습용 Python 인터프리터까지 자동으로 내려받습니다. 초심자가 가장 자주 막히는 "Python 설치 / PATH 설정 / venv 활성화" 단계를 건너뛸 수 있습니다.
 
@@ -154,7 +96,7 @@ uv --version
 > - **macOS:** [python.org macOS 설치본](https://www.python.org/downloads/macos/)을 받거나 `brew install python@3.11`(Homebrew) 또는 `pyenv install 3.11.9`(pyenv)를 사용합니다.
 > - **Linux:** 배포판 패키지 매니저(`apt`, `dnf` 등) 또는 `pyenv install 3.11.9`로 설치합니다.
 
-### 6. VS Code 설치
+### 3. VS Code 설치
 
 실습 코드는 VS Code에서 실행하는 것을 기준으로 구성되어 있습니다.
 
@@ -162,17 +104,101 @@ uv --version
 - 권장 확장: Python, Pylance, Azure Account
 - VS Code의 통합 터미널을 사용하면 편리합니다(Windows: PowerShell, macOS/Linux: zsh 또는 bash).
 
+VS Code Python 확장은 다음 [실습 환경 처음 잡기](#실습-환경-처음-잡기) 단계에서 만들 `.venv`를 자동으로 인식해 코드 자동완성(IntelliSense), ▶ 실행 버튼, F5 디버깅을 지원합니다.
+
+## 실습 환경 처음 잡기
+
+준비물(서비스/구독, uv, VS Code)이 갖춰졌으면 이제 실제 실습 환경을 잡습니다. 아래 순서대로 진행하면 의존성 설치 → Foundry 리소스 연결 → 기본 설정 확인까지 한 번에 끝납니다.
+
+### 1. 저장소 열고 의존성 설치
+
 VS Code에서 이 폴더를 연 뒤, 통합 터미널에서 아래 한 줄로 실습 환경을 만듭니다.
 
 ```bash
 uv sync
 ```
 
-이 명령은 `pyproject.toml`과 `uv.lock`을 읽어 저장소 루트에 `.venv`를 생성하고, 고정된 버전의 모든 패키지를 한 번에 설치합니다(Python 3.11.9가 없으면 자동으로 내려받습니다). OpenTelemetry 3종(`opentelemetry-api==1.38.0`, `opentelemetry-sdk==1.38.0`, `opentelemetry-semantic-conventions==0.59b0`)을 비롯한 모든 버전은 `uv.lock`에 고정되어 있어, 누가 실행해도 동일한 조합이 설치됩니다(Application Insights trace exporter 호환).
+이 명령은 `pyproject.toml`과 `uv.lock`을 읽어 저장소 루트에 `.venv`를 생성하고, 고정된 버전의 모든 패키지를 한 번에 설치합니다(Python 3.11.9가 없으면 자동으로 내려받습니다). OpenTelemetry 3종(`opentelemetry-api==1.38.0`, `opentelemetry-sdk==1.38.0`, `opentelemetry-semantic-conventions==0.59b0`)을 비롯한 모든 버전은 `uv.lock`에 고정되어 있어, 누가 실행해도 동일한 조합이 설치됩니다(Application Insights trace exporter 호환). `pip` 방식에서 자주 보던 "이미 설치된 `opentelemetry` 패키지가 더 높은 버전으로 남아 `cannot import name 'LogData'` 오류" 문제가 발생하지 않습니다.
+
+설치 후 환경이 lockfile과 일치하는지 확인합니다.
+
+```bash
+uv sync --frozen --check
+```
+
+> 이 저장소는 의존성 관리를 `pyproject.toml` + `uv.lock`으로 일원화합니다. `pip` 기반 워크플로가 필요하면 `uv export --format requirements-txt > requirements.txt`로 언제든 생성할 수 있습니다.
 
 생성된 `.venv`는 VS Code Python 확장이 자동으로 감지합니다. 우측 하단 또는 명령 팔레트(`Python: Select Interpreter`)에서 `.venv`가 선택되면, 코드 자동완성(IntelliSense), ▶ 실행 버튼, F5 디버깅이 모두 정상 동작합니다. 인터프리터가 자동으로 잡히지 않으면 직접 선택하세요. Windows는 `.\.venv\Scripts\python.exe`, macOS/Linux는 `./.venv/bin/python`입니다.
 
-### 7. API key 설정 확인
+### 2. Foundry 엔드포인트와 API key 준비
+
+실습의 공통 실행 경로는 OpenAI-compatible endpoint와 API key를 사용합니다.
+
+준비 항목은 다음과 같습니다.
+
+- OpenAI-compatible endpoint 1개
+- API key 1개
+- Endpoint 값: `.env`의 `FOUNDRY_OPENAI_ENDPOINT`에 입력합니다.
+- API key 값: `.env`의 `FOUNDRY_API_KEY`에 입력합니다.
+
+Azure OpenAI endpoint는 보통 다음 형태입니다.
+
+```bash
+https://<resource>.openai.azure.com/
+```
+
+Foundry inference endpoint를 직접 쓰는 경우에는 `FOUNDRY_OPENAI_ENDPOINT_TYPE=foundry`로 바꾸고, endpoint를 OpenAI-compatible base URL로 입력합니다. `.env`는 `.env.example`을 복사해 만들며, 전체 변수 예시는 아래 [.env 샘플 코드](#env-샘플-코드)에 있습니다.
+
+### 3. 모델 배포
+
+이 실습의 기본 예제는 다음 모델 배포 이름을 사용합니다.
+
+- Chat/Responses 모델 배포: `gpt-5.4`
+- Embeddings 모델 배포: `text-embedding-3-small`
+
+모델 배포 이름은 Azure 모델 이름이 아니라 Foundry 프로젝트 안에서 만든 배포 이름입니다. 다른 이름으로 배포했다면 `.env`에서 아래 값을 실제 배포 이름에 맞게 변경하세요.
+
+```bash
+FOUNDRY_MODEL_DEPLOYMENT_NAME=gpt-5.4
+FOUNDRY_EMBEDDING_DEPLOYMENT_NAME=text-embedding-3-small
+```
+
+모델 배포가 준비되지 않으면 1장의 첫 모델 호출, 2장의 Responses API smoke test, 4장의 RAG 예제가 정상 동작하지 않습니다.
+
+### 4. (선택) Foundry Tracing 연결
+
+Tracing 연결은 필수는 아니지만 강력히 권장합니다. 연결되어 있으면 Foundry 포털에서 요청, 응답, latency, error span을 추적할 수 있습니다. 도구 호출이나 실제 Agent Service 실행 trace는 해당 선택 실습을 실행하는 환경에서 확인합니다.
+
+- Tracing 연결이 있는 경우: Foundry/monitoring 화면에서 trace를 확인하며 실습합니다.
+- Tracing 연결이 없는 경우: 코드가 콘솔 trace로 대체 실행되므로 핵심 실습은 계속 진행할 수 있습니다.
+
+Tracing 관련 예제는 다음 파일에서 확인합니다.
+
+```bash
+uv run Chapter2_Foundry_Fundamentals/2.3_foundry_tracing_smoke_test.py
+uv run Chapter8_Foundry_Agents/8.4_foundry_agent_monitoring.py
+```
+
+### 5. (선택) Application Insights 생성
+
+Application Insights connection string은 Application Insights 리소스를 먼저 만들어야 확인할 수 있습니다. 8장 monitoring과 Azure Monitor trace를 보려면 강의 전에 Azure Portal에서 다음 순서로 준비합니다.
+
+1. Azure Portal에서 **Application Insights**를 검색해 새 리소스를 만듭니다.
+2. 실습 Foundry resource와 같은 subscription/resource group/region을 선택합니다.
+3. **Workspace-based** Application Insights를 선택하고 Log Analytics workspace를 새로 만들거나 기존 workspace를 연결합니다.
+4. 생성이 끝나면 Application Insights 리소스의 **Overview** 또는 **Properties**에서 **Connection String** 값을 복사합니다.
+5. `.env`에 다음처럼 붙여 넣습니다.
+
+    ```bash
+    FOUNDRY_APPLICATIONINSIGHTS_CONNECTION_STRING=<application-insights-connection-string>
+    FOUNDRY_APPLICATIONINSIGHTS_AUTO_CREATE=false
+    ```
+
+이 값은 로컬 Python 코드의 OpenTelemetry span을 Azure Monitor로 보내는 데 사용합니다. Foundry 포털의 agent 추적/monitoring 화면에서도 같은 telemetry를 보려면, 포털에서 project 또는 agent의 monitoring/trace 화면에 표시되는 Application Insights 연결 배너를 통해 같은 리소스를 연결합니다.
+
+Application Insights를 만들지 않아도 실습 코드는 콘솔 trace로 계속 실행됩니다. 다만 8.4에서 Azure Portal이나 Foundry 포털의 monitoring 데이터를 함께 보려면 connection string과 포털 연결이 필요합니다.
+
+### 6. 기본 설정 확인
 
 이 리포지토리의 공통 실행 코드는 Azure CLI 로그인을 사용하지 않습니다. `.env`에 endpoint와 API key를 넣은 뒤 아래 명령으로 기본 환경을 먼저 확인하세요.
 
@@ -227,22 +253,6 @@ Tracing은 기본적으로 콘솔 exporter로 OpenTelemetry span을 출력합니
 | 8장 | Foundry Agent Service | Foundry Project SDK 기반 agent 생성/등록/실행, RAG chunk/vector, Azure AI Search tool, Knowledge base retrieve, MCPTool 코드 연결, 포털 모니터링 | `8.1_create_and_run_foundry_agent.py`, `8.2_create_foundry_agent_with_knowledge_base.py`, `8.3_create_foundry_agent_with_mcp.py`, `8.4_foundry_agent_monitoring.py` |
 
 최종적으로 학습자는 API key 기반 모델 호출에서 시작해, prompt-style agent, RAG, MCP 스타일 도구 서버, Streamlit UI, OpenTelemetry trace, guardrails, Foundry Project SDK 기반 agent를 하나의 운영형 에이전트 시스템 관점에서 이해하고 실행할 수 있어야 합니다.
-
-## 모듈 전체 설치
-
-```bash
-uv sync
-```
-
-`uv sync`는 `uv.lock`에 고정된 버전을 그대로 설치하므로, 기존 환경을 재사용하더라도 항상 동일한 패키지 조합으로 맞춰집니다. `pip` 방식에서 자주 보던 "이미 설치된 `opentelemetry` 패키지가 더 높은 버전으로 남아 `cannot import name 'LogData'` 오류" 문제가 발생하지 않습니다.
-
-설치 후 환경이 lockfile과 일치하는지 확인합니다.
-
-```bash
-uv sync --frozen --check
-```
-
-> 이 저장소는 의존성 관리를 `pyproject.toml` + `uv.lock`으로 일원화합니다. `pip` 기반 워크플로가 필요하면 `uv export --format requirements-txt > requirements.txt`로 언제든 생성할 수 있습니다.
 
 ## .env 샘플 코드
 
