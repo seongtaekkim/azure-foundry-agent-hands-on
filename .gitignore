@@ -1,0 +1,22 @@
+# ── 비밀 값: 절대 커밋 금지 ──────────────────────────────
+# 로컬 .env에는 API key·endpoint·connection string 등 비밀 값이 들어갑니다.
+.env
+.env.*
+# 단, 비밀 값이 없는 템플릿은 추적합니다.
+!.env.example
+
+# ── Python ──────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ── OS / 에디터 ──────────────────────────────
+.DS_Store
+Thumbs.db
