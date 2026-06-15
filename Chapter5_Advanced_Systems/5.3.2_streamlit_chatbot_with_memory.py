@@ -9,6 +9,17 @@ from foundry_hands_on import run_threaded_prompt
 
 load_dotenv()
 
+# Streamlit 앱은 반드시 `streamlit run`으로 띄워야 합니다. `uv run <파일>`처럼 직접 실행하면
+# Streamlit 런타임이 없어 session_state/위젯이 동작하지 않고 ScriptRunContext 경고만 반복됩니다.
+# 그 경우 올바른 명령을 안내하고 깔끔하게 종료합니다.
+if not st.runtime.exists():
+    print(
+        "\n[실행 방법 안내] 이 파일은 Streamlit 앱입니다. `uv run <파일>`로 직접 실행하면 동작하지 않습니다.\n"
+        "다음 명령으로 실행하세요:\n"
+        "  uv run streamlit run Chapter5_Advanced_Systems/5.3.2_streamlit_chatbot_with_memory.py"
+    )
+    raise SystemExit(1)
+
 st.set_page_config(page_title="Prompt-style Chatbot with Memory", layout="wide")
 st.title("Prompt-style Chatbot with Memory")
 
