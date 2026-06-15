@@ -18,6 +18,7 @@
   - [제7장: AI 에이전트의 최전선: 프로덕션, 자율성, 그리고 윤리](./Chapter7_Frontier_of_AI/README.md)
   - [제8장: Microsoft Foundry Agent Service와 RAG 도구 연결](./Chapter8_Foundry_Agents/README.md)
 - [부록: AI 프로젝트의 보이지 않는 설계도: 환경과 구성 파일 심층 분석](./APPENDIX.md)
+- [트러블슈팅 가이드: 회사 보안 환경(인증서, 안티바이러스)과 Windows 설정](./TROUBLESHOOTING.md)
 
 ## 시작하기 전에
 
@@ -119,6 +120,9 @@ VS Code Python 확장은 다음 [실습 환경 처음 잡기](#실습-환경-처
 ## 실습 환경 처음 잡기
 
 준비물(서비스/구독, uv, VS Code)이 갖춰졌으면 이제 실제 실습 환경을 잡습니다. 아래 순서대로 진행하면 저장소 내려받기 → 의존성 설치 → Foundry 리소스 연결 → 기본 설정 확인까지 한 번에 끝납니다.
+
+> [!TIP]
+> 회사 노트북처럼 **TLS 검사 프록시(Zscaler 등), 기업 안티바이러스, 관리형 Windows 정책**이 걸린 환경에서 `uv sync` / `uv run` / `az login`이 인증서 오류나 설치 실패로 막히면 [트러블슈팅 가이드](./TROUBLESHOOTING.md)를 참고하세요.
 
 ### 1. 저장소 가져오기
 

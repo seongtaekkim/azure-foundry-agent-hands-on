@@ -35,7 +35,7 @@
 
 VS Code Azure Account 로그인을 `DefaultAzureCredential`에서 사용하려면 이 저장소의 `pyproject.toml`에 포함된 `azure-identity-broker` 패키지가 필요합니다. `uv sync`를 실행하면 함께 설치됩니다.
 
-회사 네트워크에서 Zscaler 같은 TLS inspection/proxy를 사용하는 경우 `az login` 또는 Python SDK 호출이 `CERTIFICATE_VERIFY_FAILED`로 실패할 수 있습니다. 이때는 Zscaler Root CA를 OS 인증서 저장소(Windows 인증서 저장소 또는 macOS Keychain), Azure CLI, Python이 신뢰하도록 등록하거나 실습 중 프록시를 비활성화한 뒤 `az login`을 먼저 확인합니다.
+회사 네트워크에서 Zscaler 같은 TLS inspection/proxy를 사용하는 경우 `az login` 또는 Python SDK 호출이 `CERTIFICATE_VERIFY_FAILED`로 실패할 수 있습니다. 이때는 Zscaler Root CA를 OS 인증서 저장소(Windows 인증서 저장소 또는 macOS Keychain), Azure CLI, Python이 신뢰하도록 등록하거나 실습 중 프록시를 비활성화한 뒤 `az login`을 먼저 확인합니다. 인증서 등록과 OS별 명령, 런타임 호출(`REQUESTS_CA_BUNDLE`, truststore) 설정은 [트러블슈팅 가이드](../TROUBLESHOOTING.md)에 자세히 정리해 두었습니다.
 
 Agent Service 예제인 8.1, 8.2, 8.3은 `FOUNDRY_REASONING_EFFORT`를 요청에 보내지 않습니다. 일반 Responses API 예제에서는 reasoning effort를 `low`로 유지하지만, Agent Service 경로에서는 일부 endpoint가 reasoning 옵션을 거절할 수 있어 초보자 실습에서는 생략합니다.
 
@@ -101,11 +101,12 @@ AZURE_SEARCH_API_KEY=<search-admin-or-query-key>
 
 Foundry 포털에서 다음 순서로 확인합니다.
 
-1. Foundry project를 엽니다.
-2. **관리/Management** 또는 **Project settings**의 **Connections** 메뉴를 엽니다.
-3. Azure AI Search 리소스 connection을 추가합니다.
-4. connection 이름을 복사해 `.env`의 `FOUNDRY_AI_SEARCH_CONNECTION_NAME`에 넣습니다.
-5. Search index 이름은 기본값 `foundry-agent-rag-index`를 그대로 사용합니다.
+1. Foundry 리소스를 엽니다.
+2. 상단의 **빌드** 메뉴 - **지식**을 선택합니다.
+3. Foundry IQ 리소스에는 앞 단계에서 만든 Azure AI Search 리소스를 선택하고, 인증 유형은 'API 키'를 선택합니다.
+4. 연결이 완료되면, '연결 관리' 링크를 클릭합니다.
+5. '연결된 리소스' 탭을 클릭하고, 만들어진 연결 이름을 복사해 `.env`의 `FOUNDRY_AI_SEARCH_CONNECTION_NAME`에 넣습니다.
+6. Search index 이름은 기본값 `foundry-agent-rag-index`를 그대로 사용합니다.
 
 ```bash
 AZURE_SEARCH_INDEX_NAME=foundry-agent-rag-index
