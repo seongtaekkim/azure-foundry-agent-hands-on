@@ -63,12 +63,15 @@ def _print_usage(response: Any) -> None:
 
 
 def _create_response_with_reasoning_fallback(openai: Any, **request_kwargs: Any) -> Any:
+    # 모델 호출은 네트워크 왕복이라 수 초~수십 초가 걸립니다. 멈춘 것처럼 보이지 않도록
+    # 블로킹 호출 직전에 대기 상태를 알리고, flush=True로 즉시 출력되게 합니다.
+    print("\n[모델 응답 대기 중] 요청을 보냈습니다. 응답을 기다리는 중입니다... (모델에 따라 수십 초가 걸릴 수 있습니다)", flush=True)
     try:
         return openai.responses.create(**request_kwargs)
     except BadRequestError as exc:
         if "reasoning" not in request_kwargs or "reasoning" not in str(exc).lower():
             raise
-        print("\n[안내] 현재 모델 또는 endpoint가 reasoning 옵션을 지원하지 않아 reasoning 없이 재시도합니다.")
+        print("\n[안내] 현재 모델 또는 endpoint가 reasoning 옵션을 지원하지 않아 reasoning 없이 재시도합니다. 응답을 다시 기다리는 중입니다...", flush=True)
         retry_kwargs = dict(request_kwargs)
         retry_kwargs.pop("reasoning", None)
         return openai.responses.create(**retry_kwargs)

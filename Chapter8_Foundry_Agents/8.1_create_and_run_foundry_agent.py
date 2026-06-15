@@ -582,6 +582,7 @@ def create_agent_response(
         request_kwargs["conversation"] = conversation_id
 
     try:
+        print("\n[에이전트 실행 대기 중] Foundry 에이전트에 요청을 보냈습니다. 응답을 기다리는 중입니다... (도구 호출이 포함되면 수십 초가 걸릴 수 있습니다)", flush=True)
         response = openai.responses.create(**request_kwargs)
     except Exception as exc:
         if not conversation_id:

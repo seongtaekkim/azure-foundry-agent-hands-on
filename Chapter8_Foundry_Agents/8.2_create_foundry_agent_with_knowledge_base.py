@@ -109,6 +109,7 @@ def create_agent_response(openai: Any, *, agent_name: str, user_input: str) -> o
         request_kwargs["conversation"] = conversation_id
 
     try:
+        print("\n[에이전트 실행 대기 중] Knowledge base 에이전트에 요청을 보냈습니다. 응답을 기다리는 중입니다... (검색/도구 호출 포함 시 수십 초가 걸릴 수 있습니다)", flush=True)
         response = openai.responses.create(**request_kwargs)
     except Exception as exc:
         if not conversation_id:

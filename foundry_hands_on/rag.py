@@ -36,11 +36,16 @@ def embed_texts(texts: Iterable[str], *, scenario_name: str) -> list[list[float]
     if not settings.embedding_deployment_name:
         raise RuntimeError("FOUNDRY_EMBEDDING_DEPLOYMENT_NAME is required for RAG samples.")
 
+    text_list = list(texts)
     with foundry_span(scenario_name):
         with get_openai_client() as openai:
+            print(
+                f"\n[임베딩 생성 대기 중] 텍스트 {len(text_list)}개를 벡터로 변환하는 중입니다...",
+                flush=True,
+            )
             response = openai.embeddings.create(
                 model=settings.embedding_deployment_name,
-                input=list(texts),
+                input=text_list,
             )
     return [item.embedding for item in response.data]
 
