@@ -285,7 +285,7 @@ FOUNDRY_REASONING_EFFORT=low
 # 7장 선택 토글 (사람 대신 모델이 편집 단계를 수행)
 # CHAPTER7_USE_MODEL_EDITOR=false
 
-# Tracing / Application Insights (2.3, 8장 trace·monitoring)
+# Tracing / Application Insights (2.3, 8장 trace, monitoring)
 # 연결 문자열이 없으면 콘솔 exporter로 자동 동작합니다.
 FOUNDRY_APPLICATIONINSIGHTS_CONNECTION_STRING=<application-insights-connection-string>
 # trace에 prompt/응답 본문까지 기록하려면 true (기본 false)
@@ -308,7 +308,7 @@ FOUNDRY_AI_SEARCH_QUERY_TYPE=simple
 # connection 이름 대신 전체 리소스 ID로 직접 지정할 때만 사용
 # FOUNDRY_AI_SEARCH_CONNECTION_ID=
 
-# 8.1/8.4 Application Insights 자동 생성·모니터링 (선택)
+# 8.1/8.4 Application Insights 자동 생성, 모니터링 (선택)
 # AUTO_CREATE=true 이고 AZURE_RESOURCE_GROUP이 있을 때만 자동 생성합니다.
 # 8.4 monitoring은 FOUNDRY_APPLICATIONINSIGHTS_NAME으로 리소스를 찾습니다.
 FOUNDRY_APPLICATIONINSIGHTS_AUTO_CREATE=false
@@ -359,7 +359,7 @@ FOUNDRY_DEMO_MCP_TEST_QUESTION=How can I create a Microsoft Foundry project usin
 | Application Insights 자동 생성(선택) | `FOUNDRY_APPLICATIONINSIGHTS_AUTO_CREATE=true`로 켰을 때만 사용 | `FOUNDRY_APPLICATIONINSIGHTS_AUTO_CREATE`, `AZURE_RESOURCE_GROUP`, `AZURE_LOCATION`, `FOUNDRY_LOG_ANALYTICS_WORKSPACE_NAME` | 8.1 App Insights/Log Analytics 자동 준비 |
 | Knowledge base 생성 | Foundry IQ 또는 Azure AI Search Knowledge bases | `FOUNDRY_KNOWLEDGE_BASE_NAME`, `FOUNDRY_KB_MCP_CONNECTION_NAME`, `FOUNDRY_KB_AGENT_NAME`, `FOUNDRY_KB_TEST_QUESTION` | 8.2 Knowledge base MCPTool |
 | Microsoft Learn MCP 설정 | 기본 공개 endpoint 사용, 필요 시 질문/도구 목록 변경 | `FOUNDRY_DEMO_MCP_CONNECTION_NAME`, `FOUNDRY_DEMO_MCP_SERVER_URL`, `FOUNDRY_DEMO_MCP_AGENT_NAME`, `FOUNDRY_DEMO_MCP_ALLOWED_TOOLS`, `FOUNDRY_DEMO_MCP_TEST_QUESTION` | 8.3 MCPTool |
-| (선택) 대화 이어가기·디버그 토글 | 기본값으로 두면 매번 새 conversation 생성, 콘솔 trace 사용 | `FOUNDRY_AGENT_CONVERSATION_ID`, `FOUNDRY_KB_AGENT_CONVERSATION_ID`, `FOUNDRY_DEMO_MCP_AGENT_CONVERSATION_ID`, `CHAPTER7_USE_MODEL_EDITOR`, `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` | 7장 토글, 8장 conversation 재사용/trace 본문 기록 |
+| (선택) 대화 이어가기, 디버그 토글 | 기본값으로 두면 매번 새 conversation 생성, 콘솔 trace 사용 | `FOUNDRY_AGENT_CONVERSATION_ID`, `FOUNDRY_KB_AGENT_CONVERSATION_ID`, `FOUNDRY_DEMO_MCP_AGENT_CONVERSATION_ID`, `CHAPTER7_USE_MODEL_EDITOR`, `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` | 7장 토글, 8장 conversation 재사용/trace 본문 기록 |
 
 ## 강의 전 초기 설정 체크리스트
 
