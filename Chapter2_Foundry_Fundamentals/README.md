@@ -35,6 +35,8 @@
 
 ## 2.4 실행 순서
 
+아래 세 파일을 번호 순서대로 실행합니다. 모두 2장 핵심 실습이며, `2.3`은 Application Insights 연결이 없어도 콘솔 trace로 동작하므로 그대로 실행하면 됩니다.
+
 ```bash
 uv run Chapter2_Foundry_Fundamentals/2.1_check_foundry_settings.py
 uv run Chapter2_Foundry_Fundamentals/2.2_foundry_responses_smoke_test.py
