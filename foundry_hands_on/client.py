@@ -1,9 +1,10 @@
 from collections.abc import Sequence
 from typing import Any
 
+import httpx
 from openai import AzureOpenAI, BadRequestError, OpenAI
 
-from .config import FoundrySettings, get_reasoning_kwargs, get_settings
+from .config import FoundrySettings, get_reasoning_kwargs, get_settings, get_ssl_verify
 from .tracing import foundry_span
 
 Message = dict[str, str]
@@ -21,15 +22,23 @@ def _azure_endpoint(endpoint: str) -> str:
 def get_openai_client() -> AzureOpenAI | OpenAI:
     # FOUNDRY_OPENAI_ENDPOINT_TYPE에 따라 Foundry-style 또는 Azure OpenAI 클라이언트를 고릅니다.
     settings = get_settings()
+    verify = get_ssl_verify()
+
+    client_kwargs: dict[str, Any] = {}
+    if verify is not True:
+        client_kwargs["http_client"] = httpx.Client(verify=verify)
+
     if settings.openai_endpoint_type == "foundry":
         return OpenAI(
             base_url=settings.openai_endpoint.rstrip("/"),
             api_key=settings.api_key,
+            **client_kwargs
         )
     return AzureOpenAI(
         azure_endpoint=_azure_endpoint(settings.openai_endpoint),
         api_key=settings.api_key,
         api_version=settings.openai_api_version,
+        **client_kwargs
     )
 
 
