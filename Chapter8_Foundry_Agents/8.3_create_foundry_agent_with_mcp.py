@@ -7,12 +7,11 @@ from typing import Any
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import MCPTool, PromptAgentDefinition
-from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
 import _bootstrap  # noqa: F401
 from foundry_hands_on.client import _output_text
-from foundry_hands_on.config import get_model_deployment_name, get_project_endpoint
+from foundry_hands_on.config import get_model_deployment_name, get_project_api_key, get_project_credential, get_project_endpoint, get_ssl_verify
 from foundry_hands_on.tracing import foundry_span
 
 
@@ -117,10 +116,24 @@ def create_and_run_mcp_agent() -> str:
         require_approval="never",
     )
 
+    _credential = get_project_credential()
+    _project_api_key = get_project_api_key()
+    _ssl_verify = get_ssl_verify()
+    _openai_kwargs: dict[str, Any] = {}
+    # OBO 인증을 필요로 하는 도구(MCP 등)가 있는 에이전트는 Bearer API Key가 아닌
+    # Microsoft Entra ID 토큰 인증이 필요하므로 api_key를 _openai_kwargs에 지정하지 않고
+    # DefaultAzureCredential을 사용해 토큰 인증 방식으로 동작하게 유도합니다.
+    # if _project_api_key:
+    #     _openai_kwargs["api_key"] = _project_api_key
+    if _ssl_verify is not True:
+        import httpx
+        _openai_kwargs["http_client"] = httpx.Client(verify=_ssl_verify)
+
     with foundry_span("chapter8.learn_mcp_agent.create_and_run"):
         with AIProjectClient(
             endpoint=project_endpoint,
-            credential=DefaultAzureCredential(),
+            credential=_credential,
+            connection_verify=_ssl_verify,
         ) as project:
             agent = project.agents.create_version(
                 agent_name=agent_name,
@@ -146,7 +159,7 @@ def create_and_run_mcp_agent() -> str:
             print(f"- question: {question}")
 
             try:
-                with project.get_openai_client() as openai:
+                with project.get_openai_client(**_openai_kwargs) as openai:
                     response = create_agent_response(
                         openai,
                         agent_name=agent.name,

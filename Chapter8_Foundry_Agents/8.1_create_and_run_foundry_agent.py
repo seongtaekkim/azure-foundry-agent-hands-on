@@ -16,7 +16,6 @@ from azure.ai.projects.models import (
     AzureAISearchToolResource,
     PromptAgentDefinition,
 )
-from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import AzureError
 from azure.search.documents import SearchClient
@@ -39,7 +38,7 @@ from dotenv import load_dotenv
 
 import _bootstrap  # noqa: F401
 from foundry_hands_on.client import _output_text
-from foundry_hands_on.config import get_model_deployment_name, get_project_endpoint
+from foundry_hands_on.config import get_model_deployment_name, get_project_api_key, get_project_credential, get_project_endpoint, get_ssl_verify
 from foundry_hands_on.rag import chunk_text, embed_texts
 from foundry_hands_on.tracing import foundry_span
 
@@ -380,7 +379,11 @@ def create_or_update_search_index(*, vector_dimension: int) -> tuple[str, str | 
         return search_index_name, None, False
 
     credential = AzureKeyCredential(search_api_key)
-    index_client = SearchIndexClient(endpoint=search_endpoint, credential=credential)
+    index_client = SearchIndexClient(
+        endpoint=search_endpoint,
+        credential=credential,
+        connection_verify=get_ssl_verify(),
+    )
     fields = [
         SimpleField(name="id", type=SearchFieldDataType.String, key=True),
         SearchableField(name="content", type=SearchFieldDataType.String),
@@ -446,6 +449,7 @@ def upload_rag_documents(*, search_endpoint: str, search_index_name: str, docume
         endpoint=search_endpoint,
         index_name=search_index_name,
         credential=AzureKeyCredential(search_api_key),
+        connection_verify=get_ssl_verify(),
     )
     try:
         result = search_client.upload_documents(documents=documents)
@@ -655,10 +659,21 @@ def create_and_run_foundry_agent() -> str:
     else:
         print("\n[Fallback mode] Azure AI Search tool 없이 policy context를 user message에 직접 넣어 실행합니다.")
 
+    _credential = get_project_credential()
+    _project_api_key = get_project_api_key()
+    _ssl_verify = get_ssl_verify()
+    _openai_kwargs: dict[str, Any] = {}
+    if _project_api_key:
+        _openai_kwargs["api_key"] = _project_api_key
+    if _ssl_verify is not True:
+        import httpx
+        _openai_kwargs["http_client"] = httpx.Client(verify=_ssl_verify)
+
     with foundry_span("chapter8.foundry_agent.create_and_run"):
         with AIProjectClient(
             endpoint=project_endpoint,
-            credential=DefaultAzureCredential(),
+            credential=_credential,
+            connection_verify=_ssl_verify,
         ) as project:
             search_tool = build_search_tool(project, search_index_name) if search_endpoint else None
             tools = [search_tool] if search_tool else None
@@ -695,7 +710,7 @@ def create_and_run_foundry_agent() -> str:
                 )
                 user_input = search_user_input if search_tool else fallback_user_input
 
-                with project.get_openai_client() as openai:
+                with project.get_openai_client(**_openai_kwargs) as openai:
                     try:
                         response = create_agent_response(
                             openai,
