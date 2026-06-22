@@ -4,6 +4,8 @@
 
 교육 목표는 생성형 AI 호출에서 출발해 prompt-style agent, RAG, MCP 도구 서버, trace와 guardrails, 실제 Foundry Agent Service agent 생성까지 이어지는 운영형 에이전트 개발 흐름을 경험하는 것입니다.
 
+[Hands-on-Lab PDF 파일 다운로드](HOL.pdf)
+
 ## 전체 목차
 
 - **Part 1: AI 개발의 기초 다지기**
